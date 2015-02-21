@@ -97,3 +97,155 @@ abbr        #include<iostream> int main...
 snippet     p
 options     head
   std::cout << ${0:TARGET} << std::endl;
+
+snippet     qmainwindow
+abbr        #include<QMainWindow> class...
+    #include <QMainWindow>
+    #include "ui_$1.h"
+
+    class ${1:#:name} : public QMainWindow
+    {
+    Q_OBJECT
+        typedef $1 Self;
+        typedef QMainWindow Base;
+
+    protected:
+        Ui::$1* ui;
+
+    public:
+        $1( QWidget* parent = 0, Qt::WindowFlags flags = 0 );
+        virtual ~$1( );
+
+    protected:
+        void setupUi( );
+
+    }; // class $1${0}
+
+    $1::$1( QWidget* parent, Qt::WindowFlags flags ):
+        Base( parent, flags ),
+        ui( new Ui::$1 )
+    {
+        this->setupUi( );
+
+    }
+
+    $1::~$1( )
+    {
+
+    }
+
+    void $1::setupUi( )
+    {
+        ui->setupUi( this );
+    }
+
+snippet qclt
+    #include <QApplication>
+    #include "util/CommandLineTool.h"
+    ${1}
+
+    class Main : public ucd::CommandLineTool
+    {
+    protected:
+        ${2}
+
+    public:
+        typedef ucd::CommandLineTool Base;
+
+        Main( int argc, char *argv[] ):
+            Base( argc, argv )${3}
+        {
+            setupProgramOptions( );
+        }
+
+        virtual void setupProgramOptions( )
+        {
+            this->Base::setupProgramOptions( );
+            m_options.add_options( )
+                ("input,i", po::value< std::string >()->required(), "input file")
+            ;
+            addPositionalOption( "input", 1 );
+        }
+
+        virtual void help( )
+        {
+            std::cout << "Brief 60-character description of the program.\n";
+            std::cout << "\n";
+        }
+
+        virtual void usage( )
+        {
+            std::cout << "Usage: " << m_args[0] << " input\n";
+            std::cout << m_options << "\n";
+        }
+
+        virtual int run( )
+        {
+            int errorCode = 0;
+            if ( ! parseProgramOptions( &errorCode ) )
+            {
+                return errorCode;
+            }
+
+            // entry point here
+            ${0}
+
+            return 0;
+        }
+    };
+
+    int main(int argc, char *argv[])
+    {
+        QApplication app(argc, argv);
+        Main program(argc, argv);
+        int retCode = program.run( );
+        return retCode;
+    }
+
+snippet qgi
+    #include <QGraphicsItem>
+
+    class QPainter;
+    class QStyleOptionGraphicsItem;
+
+    class ${1:#:name} : public QGraphicsItem
+    {
+    public:
+        typedef $1 Self;
+        typedef QGraphicsItem Base;
+
+        $1(QGraphicsItem* parent = 0);
+        virtual ~$1();
+
+        virtual QRectF boundingRect() const;
+        virtual void paint( QPainter* painter, const QStyleOptionGraphicsItem* option,
+            QWidget* widget = 0 );
+
+    }; // class $1
+
+    #include "$1.h"
+    #include <QPainter>
+    #include <QStyleOptionGraphicsItem>
+
+    $1::$1(QGraphicsItem* parent):
+        Base(parent)
+    {
+
+    }
+
+    $1::~$1( )
+    {
+
+    }
+
+    QRectF $1::boundingRect() const
+    {
+        return QRectF();
+    }
+
+    void $1::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
+        QWidget* widget)
+    {
+
+    }
+
